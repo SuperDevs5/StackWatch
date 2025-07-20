@@ -3,7 +3,7 @@
 ### 1. Fork & Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/humanchain-ai-safety-log.git
+git clone https://github.com/SuperDevs5/StackWatch.git
 cd StackWatch
 
 pnpm install
