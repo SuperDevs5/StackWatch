@@ -12,3 +12,74 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       String         @id @default(uuid())
+  username String         @unique
+  email    String?
+  password String
+  Orgs     Organization[] // one user can have multiple orgs
+}
+
+model Organization {
+  id               String    @id @default(uuid())
+  organizationName String
+  user             User     @relation(fields: [userId], references: [id])
+  userId           String
+  emails           Email[] //one org can can have mutiple user with their email
+  websites         Website[] //one org can can have mutiple website 
+}
+
+model Website {
+  id             String          @id @default(uuid())
+  url            String
+  createdAt      DateTime        @default(now())
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  organizationId String
+  regions        websiteRegion[]
+  status         websiteStatus[]
+}
+
+model Region {
+  id       String          @id @default(uuid())
+  region   Regions
+  websites websiteRegion[]
+}
+
+// many to many between website and region
+// websiteRegion is working as a middleman
+model websiteRegion {
+  id        String  @id @default(uuid())
+  websiteId String
+  regionId  String
+  region    Region  @relation(fields: [regionId], references: [id])
+  website   Website @relation(fields: [websiteId], references: [id])
+}
+
+model websiteStatus {
+  id           String    @id @default(uuid())
+  responseTime Int
+  urlStatus    UrlStatus
+  websiteId    String
+  Website      Website  @relation(fields: [websiteId], references: [id])
+}
+
+model Email {
+  id             String        @id @default(uuid())
+  emailAddress   String
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+}
+
+enum Regions {
+  EUROPE
+  ASIA
+  AMERICA
+  AUSTRALIA
+}
+
+enum UrlStatus {
+  UP
+  DOWN
+  PENDING
+}
